@@ -3,7 +3,9 @@ import { Provider } from 'react-redux';
 import { IndexRoute, Router, Route, hashHistory, browserHistory } from 'react-router';
 import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
 import App from "./app";
-import Index from "./containers/index";
+//import Index from "./containers/index";
+import Index from "./containers/api";
+import Add from "./containers/add";
 
 
 //import Modeules from './controller/index';
@@ -18,6 +20,10 @@ let appRootComponent = (
         <Router history={hashHistory}>
             <Route path="/" component={App}>
                 <IndexRoute component={Index} />
+                <Route path="/" component={Index}>
+                    <Route path="/add" component={Add} />
+                </Route>
+
             </Route>
             {/*404, <NotFoundRoute handler={CourseRouteNotFound} /> NotFoundRoute这个好像也行*/}
             {/**<Route path="*" component={NotFound}></Route> */}

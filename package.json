@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "electron ./wwwroot/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -28,6 +29,9 @@
     "react-router-redux": "^4.0.5",
     "redux": "^3.5.2",
     "redux-thunk": "^2.1.0",
-    "webpack": "^1.13.1"
+    "webpack": "^1.13.1",
+    "querystring": "^0.2.0",
+    "url-parse":"^1.1.7",
+    "lokijs": "^1.4.2"
   }
 }

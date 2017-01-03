@@ -7,6 +7,7 @@ import {combineReducers} from 'redux';
 // import router from './routerReducer';
 // import {ConfigReducer} from './configReducer';
 import {DataReducer} from './dataReducer';
+import {apiDataReducer} from './apiDataReducer';
 /**
  * 合并reducers
  */
@@ -15,6 +16,7 @@ const index = combineReducers({
   // router,
   // routing: routerReducer
     data:DataReducer,
+    apiData:apiDataReducer
   // config:ConfigReducer
 })
 
