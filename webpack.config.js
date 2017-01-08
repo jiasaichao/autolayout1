@@ -27,31 +27,33 @@ module.exports = {
         // Add '.ts' and '.tsx' as resolvable extensions.
         extensions: ["", ".webpack.js", ".web.js", ".ts", ".tsx", ".js", ".jsx"]
     },
-
+    node: {
+        fs: 'empty'
+    },
     module: {
         loaders: [
             {
-        test: /\.svg$/,
-        loader: 'svg-sprite'
-      },
+                test: /\.svg$/,
+                loader: 'svg-sprite'
+            },
             {
-          test: /\.jsx?$/,
-          exclude: /(node_modules|bower_components)/,
-          loader: 'babel-loader', // 'babel-loader' is also a legal name to reference
-          query: {
-             presets: ['react', 'es2015', 'stage-0']
-          }
-        },
+                test: /\.jsx?$/,
+                exclude: /(node_modules|bower_components)/,
+                loader: 'babel-loader', // 'babel-loader' is also a legal name to reference
+                query: {
+                    presets: ['react', 'es2015', 'stage-0']
+                }
+            },
             // All files with a '.ts' or '.tsx' extension will be handled by 'ts-loader'.
             { test: /\.tsx?$/, loader: "ts-loader" },
-             {
-        test: /\.js$/,
-        exclude: /node_modules/,
-          loader: 'babel-loader', // 'babel-loader' is also a legal name to reference
-          query: {
-             presets: ['react', 'es2015', 'stage-0']
-          }
-      }
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: 'babel-loader', // 'babel-loader' is also a legal name to reference
+                query: {
+                    presets: ['react', 'es2015', 'stage-0']
+                }
+            }
         ],
 
         preLoaders: [
