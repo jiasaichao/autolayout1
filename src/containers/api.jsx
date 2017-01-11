@@ -92,7 +92,7 @@ let Index1 = React.createClass({
 })
 let mapStateToProps = (state) => {
     return {
-        state
+        apiData:state.apiData
     }
 }
 

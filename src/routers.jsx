@@ -3,8 +3,8 @@ import { Provider } from 'react-redux';
 import { IndexRoute, Router, Route, hashHistory, browserHistory } from 'react-router';
 import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
 import App from "./app";
-//import Index from "./containers/index";
-import Index from "./containers/api";
+import Index from "./containers/index";
+//import Index from "./containers/api";
 import Add from "./containers/add";
 
 

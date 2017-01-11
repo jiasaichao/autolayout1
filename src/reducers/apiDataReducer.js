@@ -1,4 +1,4 @@
-import {ADD_APIDATA} from '../actions/apiData'
+import {APIDATA} from '../actions/apiData'
 
 const initialState = [];
 const initialState1 = [
@@ -13,8 +13,8 @@ const initialState1 = [
 ];
 export const apiDataReducer = (state = initialState, action) => {
     switch (action.type) {
-        case ADD_APIDATA:
-            return [...state,action.data];
+        case APIDATA:
+            return action.data;
         break;
         default:
             return state;

@@ -3,7 +3,7 @@ import { Provider, connect } from 'react-redux';
 import { Common, Dialog } from './components/index';
 import { hashHistory } from 'react-router';
 import React from 'react';
-import {GetDataAction} from './actions/apiData'
+import {GetDataAction} from './actions/data'
 
 class App extends React.Component {
 

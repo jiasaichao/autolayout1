@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import React from 'react';
-import { Add_ApiDataAction } from '../actions/apiData'
+import { AddApiDataAction } from '../actions/apiData'
 
 function InputItem({ name, label }) {
     return (
@@ -29,7 +29,7 @@ class Index extends React.Component {
                 <InputItem label='返回参数' name='returnParam' />
                 <a href='javascript:;' onClick={() => {
                     this.props.onAdd({
-                        namne:document.getElementById("namne").value,
+                        name:document.getElementById("namne").value,
                         method:document.getElementById("method").value,
                         url:document.getElementById("url").value,
                         param:document.getElementById("param").value,
@@ -48,7 +48,7 @@ let mapStateToProps = (state) => {
 }
 let mapDispatchToProps = (dispatch) => {
     return {
-        onAdd: (data) => { dispatch(Add_ApiDataAction(data)) }
+        onAdd: (data) => { dispatch(AddApiDataAction(data)) }
     }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(Index);

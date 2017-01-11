@@ -14,6 +14,8 @@
 `var db = new loki('loki.json') `   
 创建数据集:  
 `var children = db.addCollection('children')`  
+查找数据集collections是一个数组
+`var children = db.collections.find((val)=>val.name=='children')`
 插入文档:  
 ```
 children.insert({name:'Sleipnir', legs: 8})

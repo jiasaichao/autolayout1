@@ -23,7 +23,7 @@ constructor(props) {
             <div style={{ display: 'flex' }}>
                {this.props.list.map((value)=>{
                    return (
-                       <div>
+                       <div key={value.$loki}>
                        <span>{value.name}</span>
                        <span>{value.method}</span>
                        <span>{value.url}</span>

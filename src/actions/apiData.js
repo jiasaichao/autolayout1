@@ -1,18 +1,28 @@
-import Loki from 'lokijs';
-
-export const ADD_APIDATA = 'ADD_APIDATA'
-export const Add_ApiDataAction = (data) => {
+export const APIDATA = 'APIDATA'
+function getData(){
+    return window.Loki.collections.find((value)=>value.name==='apidata');
+}
+export const ApiDataAction = (data) => {
     return {
-        type: ADD_APIDATA,
+        type: APIDATA,
         data,
     }
 }
 
-export const GET_DATA = 'GET_DATA'
-export const GetDataAction = (data) => {
-    return function () {
-        if (window.Loki === undefined) {
-            window.Loki = new Loki('loki.json');
-        }
-    }
+export const RemoveApiDataAction = (id) => {
+    getData().remove(id);
+    return GetApiDataAction();
+}
+export const SetApiDataAction = (data) => {
+    getData().update(data);
+    return GetApiDataAction();
+}
+export const AddApiDataAction = (data) => {
+    getData().insert(data);
+    return GetApiDataAction();
+}
+
+export const GetApiDataAction = () => {
+    let data=getData().data;
+    return ApiDataAction(data);
 }
