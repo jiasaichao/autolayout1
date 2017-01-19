@@ -127,7 +127,14 @@ const className = {
     czjz: ' display-flex align-items ',
 }
 const Global = { styles, className };
+const Convert={
+    objToArray:function(data){
 
+    },
+    arrayToObj:function(data){
+        
+    }
+};
 
 export {Common};
 export {Global};

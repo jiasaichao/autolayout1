@@ -1,22 +1,16 @@
-const initialState = [
-    {
-        id:1,
-        components:'',
-        pid:0,
-}
-];
-const initialState1 = {
-    components:{
-        name:'',
-        props:[{name:'',value:''}],
-        children:{
-            
-        }
+const initialState = [];
+const initialState1 = [{
+    id: 1,
+    name: '',//组建名称
+    pid: 0,//父级id
+    sort: 1,//排序
+    styles: new Map(),
+    props: new Map(),
+    content: '',//内容
+}];
+export const DataReducer = (state = initialState, action) => {
+    switch (action.type) {
+        default:
+            return state
     }
-};
-export const DataReducer = (state=initialState, action)=>{
-  switch(action.type){
-    default:
-      return state
-  }
 }

@@ -14,7 +14,8 @@
 // import * as FullPage from "./fullpage";
 // import * as Scroll from "./scroll";
 // import { ImageCrop } from "./imagecrop";
-
-// export {
-//     NavBar, Placeholder, Icon, List, Container, Button, Form, Common, Dialog, Slider, NineGrid, Gesture, Animate, FullPage, Scroll, ImageCrop
-// }
+import { Container } from "./container";
+import { Text } from "./text";
+export {
+    Container,Text
+}
