@@ -1,5 +1,5 @@
 import { Common, Global } from '../utils/common';
-// import { Icon, Placeholder } from './index';
+import { Wrapped } from './wrapped';
 import React from 'react';
 let SL = Global.styles;
 let CN = Global.className;
@@ -16,7 +16,7 @@ export class Container extends React.Component {
             root: SL.create({}).merge(this.props.style)
         }
         return (
-            <div style={styles.root.o}>
+            <div style={styles.root.o} onClick={this.props.onClick}>
                 {this.props.children}
             </div>
         );
@@ -26,3 +26,4 @@ export class Container extends React.Component {
     componentDidMount() {
     }
 }
+export const ContainerWrapped=Wrapped(Container);

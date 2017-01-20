@@ -15,7 +15,7 @@ export class Text extends React.Component {
             root: SL.create({}).merge(this.props.style)
         }
         return (
-            <span style={styles.root.o}>
+            <span style={styles.root.o} onClick={this.props.onClick}>
                 {this.props.children}
             </span>
         );

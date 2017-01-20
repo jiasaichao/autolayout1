@@ -1,7 +1,7 @@
 //import {Header, Sidebar,  NavigationBar, NavigationBarItem,NavBar,List,Container} from "../components/index";
 import { connect } from 'react-redux';
 import React from 'react';
-import { Container, Text } from '../components/index';
+import {ContainerWrapped, Text } from '../components/index';
 import { AddElementAction } from '../actions/element';
 import { AddStyleAction } from '../actions/style';
 import { defaultStyle } from '../data/defaultStyle';
@@ -9,28 +9,10 @@ import { defaultStyle } from '../data/defaultStyle';
 let loadComponent = function (id, name, style, props, content, children) {
     switch (name) {
         case 'Container':
-            return <Container key={id} style={style} {...props}>{children}</Container>;
+            return <ContainerWrapped key={id} style={style} {...props}>{children}</ContainerWrapped>;
         case 'Text':
             return <Text key={id} style={style} {...props}>{content}</Text>;
     }
-}
-function getDefaultStyleMap(name) {
-    let data = new Map();
-    for (var i in defaultStyle[name]) {
-        data.set(i, defaultStyle[name][i])
-    }
-    return data;
-}
-/**
- * 获取默认style
- * @param {Map} map map类型
- */
-function getDefaultStyle(map) {
-    let data = {};
-    map.forEach((value, key) => {
-        data[key] = value;
-    });
-    return data;
 }
 
 function ComponentType({ active, text, onClick }) {
@@ -52,12 +34,26 @@ function ComponentType({ active, text, onClick }) {
     }
     return <div style={styles.componentsItem} onClick={onClick}>{text}</div>;
 }
+function ActiveElement({ top,left,height,width }) {
+    let styles = {
+        root:{
+            position:'absolute',
+            top,
+            left,
+            height,
+            width,
+            border:'1px solid #2d2323'
+        }
+    }
+    return <div style={styles.root}></div>;
+}
 
 class Index extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            active: ''
+            active: '',
+            activeElement:0,
         };
     }
     render() {
@@ -66,6 +62,7 @@ class Index extends React.Component {
         }
         return (
             <div>
+            {this.state.activeElement?<ActiveElement />:null}
                 <div style={{ display: 'flex', height: 50 }}></div>
                 <div style={{ display: 'flex' }}>
                     <div style={{ width: 315 }}>
@@ -95,7 +92,6 @@ class Index extends React.Component {
             this.props.Add({
                 name: this.state.active,
                 pid: 0,
-                styles: getDefaultStyleMap(this.state.active),
                 props: new Map(),
                 content: ''
             },defaultStyle[this.state.active]);

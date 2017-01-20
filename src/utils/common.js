@@ -5,6 +5,19 @@ class Common {
     static prepareStyles(s) {
         return new Styles(s);
     }
+    /**
+     * 获取元素相对于窗口的坐标
+     * @param {Element} e 元素
+     */
+    static getAbsPoint(e) {
+        var x = e.offsetLeft;
+        var y = e.offsetTop;
+        while (e = e.offsetParent) {
+            x += e.offsetLeft;
+            y += e.offsetTop;
+        }
+        return { 'x': x, 'y': y };
+    }
 }
 class Styles {
     constructor(style) {
@@ -37,7 +50,7 @@ class Styles {
         // }
         // return tmp;
 
-        let tmp={}
+        let tmp = {}
         for (var i = 0; i < s.length; i++) {
             let properties = s[i];
             for (var p in properties) {
@@ -46,7 +59,7 @@ class Styles {
                 }
             }
         }
-        return {...this.o,...tmp}
+        return { ...this.o, ...tmp }
     }
 }
 /**处理class样式 */
@@ -127,14 +140,14 @@ const className = {
     czjz: ' display-flex align-items ',
 }
 const Global = { styles, className };
-const Convert={
-    objToArray:function(data){
+const Convert = {
+    objToArray: function (data) {
 
     },
-    arrayToObj:function(data){
-        
+    arrayToObj: function (data) {
+
     }
 };
 
-export {Common};
-export {Global};
+export { Common };
+export { Global };
