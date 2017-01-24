@@ -1,6 +1,4 @@
-﻿
-
-class Common {
+﻿class Common {
     /**准备样式，方便合并样式*/
     static prepareStyles(s) {
         return new Styles(s);

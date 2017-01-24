@@ -1,10 +1,12 @@
 //import {Header, Sidebar,  NavigationBar, NavigationBarItem,NavBar,List,Container} from "../components/index";
 import { connect } from 'react-redux';
 import React from 'react';
-import {ContainerWrapped, Text } from '../components/index';
+import { ContainerWrapped, Text } from '../components/index';
 import { AddElementAction } from '../actions/element';
 import { AddStyleAction } from '../actions/style';
 import { defaultStyle } from '../data/defaultStyle';
+import { Common } from '../utils/common';
+import ReactDom from 'react-dom';
 
 let loadComponent = function (id, name, style, props, content, children) {
     switch (name) {
@@ -34,18 +36,31 @@ function ComponentType({ active, text, onClick }) {
     }
     return <div style={styles.componentsItem} onClick={onClick}>{text}</div>;
 }
-function ActiveElement({ top,left,height,width }) {
-    let styles = {
-        root:{
-            position:'absolute',
-            top,
-            left,
-            height,
-            width,
-            border:'1px solid #2d2323'
-        }
+class ActiveElement extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            top: 0,
+            left: 0,
+            height: 0,
+            width: 0,
+        };
     }
-    return <div style={styles.root}></div>;
+    render() {
+        let {top, left, height, width} = this.state;
+        let styles = {
+            root: {
+                position: 'absolute',
+                top: this.state.top,
+                left: this.state.left,
+                height: this.state.height,
+                width: this.state.width,
+                border: '1px solid #2d2323',
+                boxSizing: 'border-box'
+            }
+        }
+        return <div style={styles.root}></div>;
+    }
 }
 
 class Index extends React.Component {
@@ -53,7 +68,7 @@ class Index extends React.Component {
         super(props)
         this.state = {
             active: '',
-            activeElement:0,
+            activeElement: 0,//选中的元素
         };
     }
     render() {
@@ -62,7 +77,6 @@ class Index extends React.Component {
         }
         return (
             <div>
-            {this.state.activeElement?<ActiveElement />:null}
                 <div style={{ display: 'flex', height: 50 }}></div>
                 <div style={{ display: 'flex' }}>
                     <div style={{ width: 315 }}>
@@ -77,7 +91,8 @@ class Index extends React.Component {
                         </div>
                     </div>
                     <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-                        <div style={{ position: 'relative', width: 375, height: 667, border: '1px solid #11b6f5' }}>
+                        <div ref={r => this.appContainer = r} style={{ position: 'relative', width: 375, height: 667, border: '1px solid #11b6f5' }}>
+                            {this.state.activeElement ? <ActiveElement ref={e => this.activeElement = e} /> : null}
                             {this.components()}
                         </div>
                         {/*<iframe src="index.html"></iframe>*/}
@@ -87,6 +102,16 @@ class Index extends React.Component {
             </div>
         )
     }
+    componentDidUpdate(prevProps, prevState) {
+        if (this.state.activeElement) {
+            let activeElement = ReactDOM.findDOMNode(this.refs[this.state.activeElement]);
+            let point = Common.getAbsPoint(activeElement);
+            let appContainerPoint = Common.getAbsPoint(ReactDOM.findDOMNode(this.appContainer));
+            point.x -= appContainerPoint.x;
+            point.y -= appContainerPoint.y;
+            this.activeElement.setState({ top: point.y, left: point.x, width: activeElement.offsetWidth, height: activeElement.offsetHeight });
+        }
+    }
     add = () => {
         if (!!this.state.active) {
             this.props.Add({
@@ -94,7 +119,7 @@ class Index extends React.Component {
                 pid: 0,
                 props: new Map(),
                 content: ''
-            },defaultStyle[this.state.active]);
+            }, defaultStyle[this.state.active]);
 
         }
     }
@@ -106,6 +131,11 @@ class Index extends React.Component {
                 let childrenList = elementList.filter(childrenVal => childrenVal.pid == value.$loki);
                 let currentStyleList = styleList.filter(currentStyleVal => currentStyleVal.elementId == value.$loki);
                 let style = {};
+                let props = {};
+                props.ref = value.$loki;
+                props.onClick = () => {
+                    this.setState({ activeElement: value.$loki });
+                }
                 currentStyleList.forEach((currentStyle) => {
                     style[currentStyle.name] = currentStyle.value;
                 });
@@ -114,7 +144,7 @@ class Index extends React.Component {
                         allComponents(childrenValue);
                     });
                 }
-                return loadComponent(value.$loki, value.name, style, value.props, value.content, children);
+                return loadComponent(value.$loki, value.name, style, props, value.content, children);
             });
         }
         return allComponents(elementList.filter(value => value.pid == 0));
@@ -128,7 +158,7 @@ let mapStateToProps = (state) => {
 }
 let mapDispatchToProps = (dispatch) => {
     return {
-        Add: (data,style) => { dispatch(AddElementAction(data,style)) }
+        Add: (data, style) => { dispatch(AddElementAction(data, style)) }
     }
 }
 

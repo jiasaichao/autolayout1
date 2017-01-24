@@ -16,7 +16,7 @@ export class Container extends React.Component {
             root: SL.create({}).merge(this.props.style)
         }
         return (
-            <div style={styles.root.o} onClick={this.props.onClick}>
+            <div style={styles.root.o} onClick={this.click}>
                 {this.props.children}
             </div>
         );
@@ -25,5 +25,10 @@ export class Container extends React.Component {
     }
     componentDidMount() {
     }
+    click = () => {
+        if (this.props.onClick) {
+            this.props.onClick();
+        }
+    }
 }
-export const ContainerWrapped=Wrapped(Container);
+export const ContainerWrapped = Wrapped(Container);
