@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import React from 'react';
 import { ContainerWrapped, Text } from '../components/index';
 import { AddElementAction } from '../actions/element';
-import { AddStyleAction } from '../actions/style';
+import { AddStyleAction, SetStyleAction } from '../actions/style';
 import { defaultStyle } from '../data/defaultStyle';
 import { Common } from '../utils/common';
 import ReactDom from 'react-dom';
@@ -36,6 +36,26 @@ function ComponentType({ active, text, onClick }) {
     }
     return <div style={styles.componentsItem} onClick={onClick}>{text}</div>;
 }
+function Nav({elementList, active,setActive}) {
+    let style = { paddingLeft: 10 }
+    function NavContent(pid) {
+        let els = elementList.filter((el) => el.pid == pid);
+        return (
+            <div style={style}>
+                {els.map((el) => <div key={el.$loki} style={style}>
+                    <a href="javascript:;" onClick={()=>{setActive(el.$loki)}} style={{ textDecoration: 'none', color: active==el.$loki?'blue':'#000' }}>{el.name}</a>
+                    {NavContent(el.$loki)}
+                </div>)}
+            </div>
+        )
+    }
+    return (
+        <div>
+            <a href='javascript:;' onClick={()=>{setActive(0)}} style={{ textDecoration: 'none', color: active==0?'blue':'#000' }}>Container</a>
+            {NavContent(0)}
+        </div>
+    );
+}
 class ActiveElement extends React.Component {
     constructor(props) {
         super(props)
@@ -67,28 +87,40 @@ class Index extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            active: '',
-            activeElement: 0,//选中的元素
+            active: '',//选中的要添加类型名称
+            /** 选中的元素的id */
+            activeElement: 0,
         };
     }
     render() {
+        let {styleList, elementList} = this.props;
         let styles = {
-            add: { cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '26px', paddingLeft: '8px', paddingRight: '8px' }
+            add: { cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '26px', paddingLeft: '8px', paddingRight: '8px' },
+            nav: { paddingLeft: 10 }
         }
         return (
             <div>
                 <div style={{ display: 'flex', height: 50 }}></div>
                 <div style={{ display: 'flex' }}>
                     <div style={{ width: 315 }}>
-                        <h2>Components</h2>
-                        <div style={{ display: 'flex' }}>
-                            <ComponentType active={this.state.active == 'Container'} text='容器' onClick={() => { this.setState({ active: 'Container' }) } } />
-                            <ComponentType active={this.state.active == 'Text'} text='文字' onClick={() => { this.setState({ active: 'Text' }) } } />
-                            <ComponentType active={this.state.active == 'Image'} text='图片' onClick={() => { this.setState({ active: 'Image' }) } } />
+                        <div>
+                            <h2>Nav</h2>
+                            <div style={{ display: 'flex' }}>
+                                <Nav elementList={elementList} active={this.state.activeElement} setActive={(id)=>{this.setState({activeElement:id})}} />
+                            </div>
                         </div>
-                        <div style={{ display: 'flex' }}>
-                            <div onClick={this.add} style={styles.add}>add</div>
+                        <div>
+                            <h2>Components</h2>
+                            <div style={{ display: 'flex' }}>
+                                <ComponentType active={this.state.active == 'Container'} text='容器' onClick={() => { this.setState({ active: 'Container' }) }} />
+                                <ComponentType active={this.state.active == 'Text'} text='文字' onClick={() => { this.setState({ active: 'Text' }) }} />
+                                <ComponentType active={this.state.active == 'Image'} text='图片' onClick={() => { this.setState({ active: 'Image' }) }} />
+                            </div>
+                            <div style={{ display: 'flex' }}>
+                                <div onClick={this.add} style={styles.add}>add</div>
+                            </div>
                         </div>
+
                     </div>
                     <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
                         <div ref={r => this.appContainer = r} style={{ position: 'relative', width: 375, height: 667, border: '1px solid #11b6f5' }}>
@@ -97,7 +129,26 @@ class Index extends React.Component {
                         </div>
                         {/*<iframe src="index.html"></iframe>*/}
                     </div>
-                    <div style={{ width: 315 }}></div>
+                    <div style={{ width: 315 }}>
+                        <div>
+
+                        </div>
+                        <div>
+                            <div>style</div>
+                            <div>
+                                {styleList.filter(style => style.elementId == this.state.activeElement).map((style) => <div key={style.$loki}><label htmlFor="">{style.name}</label><input type="text" defaultValue={style.value} /></div>)}
+
+                            </div>
+                        </div>
+                        <div>
+                            <div>add</div>
+                            <div>
+                                <div><label htmlFor="">name</label><input ref={node => this.styleName = node} type="text" /></div>
+                                <div><label htmlFor="">value</label><input ref={node => this.styleValue = node} type="text" /></div>
+                                <div><a href='javascript:;' onClick={this.addStyle}>add</a></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         )
@@ -122,6 +173,22 @@ class Index extends React.Component {
             }, defaultStyle[this.state.active]);
 
         }
+    }
+    addStyle = () => {
+        let name = this.styleName.value;
+        let value = this.styleValue.value;
+        if (!!this.state.activeElement) {
+            this.props.AddStyle({
+                name,
+                value,
+                elementId: this.state.activeElement
+            });
+        }
+    }
+    editStyle = () => {
+        this.props.SetStyleAction({
+
+        })
     }
     components = () => {
         let {elementList, styleList} = this.props;
@@ -158,7 +225,9 @@ let mapStateToProps = (state) => {
 }
 let mapDispatchToProps = (dispatch) => {
     return {
-        Add: (data, style) => { dispatch(AddElementAction(data, style)) }
+        Add: (data, style) => { dispatch(AddElementAction(data, style)) },
+        AddStyle: (data) => { dispatch(AddStyleAction(data)) },
+        SetStyle: (data) => { dispatch(SetStyleAction(data)) }
     }
 }
 

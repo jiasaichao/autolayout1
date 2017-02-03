@@ -11,13 +11,13 @@ export const ElementAction = (data) => (dispatch) => {
     });
 }
 
-export const RemoveElementAction = (id) => {
+export const RemoveElementAction = (id) =>(dispatch) => {
     getData().remove(id);
-    return GetElementAction();
+    return GetElementAction(dispatch);
 }
-export const SetElementAction = (data) => {
+export const SetElementAction = (data) =>(dispatch) => {
     getData().update(data);
-    return GetElementAction();
+    return GetElementAction(dispatch);
 }
 export const AddElementAction = (data, style) => (dispatch) => {
     data.sort = getData().maxId + 1;

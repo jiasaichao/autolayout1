@@ -26,8 +26,9 @@ children.insert({name:'Hel', legs: 2})
 获取文档:
 ```
 children.get(1); // returns Sleipnir
-children.find( {'name':'Sleipnir'} )
+children.find( {'name':'Sleipnir'} )//如果两个属性第二个好像不起作用用findObjects这个，返回数组，没有filter，有findOne
 children.find( { legs: { '$gt' : 2 } } )
+children.findObject( {'name':'Sleipnir',elementId:1} )//查询条件是且关系，返回一个对象，findObjects是返回一个数组
 ```
 创建动态视图:
 ```

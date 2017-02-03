@@ -20,7 +20,7 @@ export const GetDataAction = (data) => {
              */
             window.Loki.addCollection('element');
             /**
-             * name
+             * name//不能重复
              * value
              * sort
              * elementId
