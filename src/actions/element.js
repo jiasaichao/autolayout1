@@ -11,16 +11,29 @@ export const ElementAction = (data) => (dispatch) => {
     });
 }
 
-export const RemoveElementAction = (id) =>(dispatch) => {
+export const RemoveElementAction = (id) => (dispatch) => {
     getData().remove(id);
     return GetElementAction(dispatch);
 }
-export const SetElementAction = (data) =>(dispatch) => {
+export const SetElementAction = (data) => (dispatch) => {
     getData().update(data);
     return GetElementAction(dispatch);
 }
+/**
+ * @param data 如果存在sort则大于等于sort的所有数据的sort+1
+ */
 export const AddElementAction = (data, style) => (dispatch) => {
-    data.sort = getData().maxId + 1;
+    if (data.sort) {
+        data.sort = sort;
+        getData().chain().where((value)=>{return value.sort>=data.sort}).update((value)=>{
+            value.sort=value.sort+1;
+            return value;
+        });
+    }
+    else {
+        data.sort = getData().maxId + 1;        
+    }
+
     let insert = getData().insert(data);
 
     for (var i in style) {

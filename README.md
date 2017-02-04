@@ -30,6 +30,116 @@ children.find( {'name':'Sleipnir'} )//如果两个属性第二个好像不起作
 children.find( { legs: { '$gt' : 2 } } )
 children.findObject( {'name':'Sleipnir',elementId:1} )//查询条件是且关系，返回一个对象，findObjects是返回一个数组
 ```
+其他可用方法实例 Resultset chaining:
+limit - 允许将结果限制为特定文档计数。
+offset - 允许从结果中跳过第一数量的文档。
+branch - 用于将查询路径拆分为多个分支。
+simplesort - 只传递属性名称，您的resulset将按此排序。
+sort - 允许你提供自己的比较函数来对结果集进行排序。
+compoundort - 允许您基于多个属性按升序或降序排序。
+update - 用于对当前在结果集中的所有文档运行更新操作（javascript函数）。这个常用更新操作，一个
+remove - 从集合中移除当前在resultset中的所有文档对象（以及resultset）
+map - 映射到一个新的匿名集合，提供一个map函数
+mapReduce - 允许您为当前结果集数据指定一个映射函数和一个reduce函数。
+eqJoin - 左连接两组数据。连接键可以定义或计算属性
+transform - 在结果集级别，这需要一个原始变换数组。当开始链时，命名的或原始的变换可以被传递到链方法。有关更多详细信息，请参阅“集合转换”Wiki页面。
+```
+var results = coll.chain()
+                  .find({'Age': {'$gt':20}})
+                  .where(function(obj) {
+                     return obj.Country.indexOf('FR') === 0;
+                   })
+                  .simplesort('Name')
+                  .offset(100)
+                  .limit(25)
+                  .data();
+```
+'Find'运算符示例:
+$eq / $ne : 
+```
+// explicit
+var results = coll.find({'Name': { '$eq' : 'Odin' }});
+
+// implicit (assumes equality operator)
+results = coll.find({'Name': 'Odin'});
+
+// 不相等
+results = coll.find({'legs': { '$ne' : 8 }});
+```
+$regex:
+```
+// pass in raw regex
+var results = coll.find({'Name': { '$regex' : /din/ }});
+
+// or pass in string pattern only
+results = coll.find({'Name': { '$regex': 'din' }});
+
+// or pass in [pattern, options] string array
+results = coll.find({'Name': { '$regex': ['din', 'i'] }});
+```
+
+If using regex operator within a named transform or dynamic view filter, it is best to use the latter two examples since raw regex does not seem to serialize/deserialize well.
+
+$in:
+```
+var users = db.addCollection("users");
+users.insert({ name : 'odin' });
+users.insert({ name : 'thor' });
+users.insert({ name : 'svafrlami' });
+
+// match users with name in array set ['odin' or 'thor']
+var results = users.find({ 'name' : { '$in' : ['odin', 'thor'] } });
+```
+$between
+```
+// match users with count value between 50 and 75
+var results = users.find({ count : { '$between': [50, 75] });
+```
+$contains / $containsAny / $containsNone
+```
+var users = db.addCollection("users");
+users.insert({ name : 'odin', weapons : ['gungnir', 'draupnir']});
+users.insert({ name : 'thor', weapons : ['mjolnir']});
+users.insert({ name : 'svafrlami', weapons : ['tyrfing']});
+users.insert({ name : 'arngrim', weapons : ['tyrfing']});
+
+// returns 'svafrlami' and 'arngrim' documents
+var results = users.find({ 'weapons' : { '$contains' : 'tyrfing' } });
+
+// returns 'svafrlami', 'arngrim', and 'thor' documents
+results = users.find({ 'weapons' : { '$containsAny' : ['tyrfing', 'mjolnir'] } });
+
+// returns 'svafrlami' and 'arngrim'
+results = users.find({ 'weapons' : { '$containsNone' : ['gungnir', 'mjolnir'] } });
+```
+Composing Nested Queries
+
+$and : 
+```
+// fetch documents matching both sub-expressions
+var results = coll.find({
+  '$and': [{ 
+      'Age' : {
+        '$gt': 30
+      }
+    },{
+      'Name' : 'Thor'
+    }]
+});
+```
+$or : 
+```
+// fetch documents matching any of the sub-expressions
+var results = coll.find({
+  '$or': [{ 
+      'Age' : {
+        '$gte': '40'
+      }
+    },{
+      'Name' : 'Thor'
+    }]
+});
+```
 创建动态视图:
 ```
 var legs = children.addDynamicView('legs');

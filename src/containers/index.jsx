@@ -36,14 +36,15 @@ function ComponentType({ active, text, onClick }) {
     }
     return <div style={styles.componentsItem} onClick={onClick}>{text}</div>;
 }
-function Nav({elementList, active,setActive}) {
+/**内容位置导航 */
+function Nav({elementList, active, setActive}) {
     let style = { paddingLeft: 10 }
     function NavContent(pid) {
         let els = elementList.filter((el) => el.pid == pid);
         return (
             <div style={style}>
                 {els.map((el) => <div key={el.$loki} style={style}>
-                    <a href="javascript:;" onClick={()=>{setActive(el.$loki)}} style={{ textDecoration: 'none', color: active==el.$loki?'blue':'#000' }}>{el.name}</a>
+                    <a href="javascript:;" onClick={() => { setActive(el.$loki) }} style={{ textDecoration: 'none', color: active == el.$loki ? 'blue' : '#000' }}>{el.name}</a>
                     {NavContent(el.$loki)}
                 </div>)}
             </div>
@@ -51,11 +52,12 @@ function Nav({elementList, active,setActive}) {
     }
     return (
         <div>
-            <a href='javascript:;' onClick={()=>{setActive(0)}} style={{ textDecoration: 'none', color: active==0?'blue':'#000' }}>Container</a>
+            <a href='javascript:;' onClick={() => { setActive(0) }} style={{ textDecoration: 'none', color: active == 0 ? 'blue' : '#000' }}>Container</a>
             {NavContent(0)}
         </div>
     );
 }
+/**选中元素的遮罩 */
 class ActiveElement extends React.Component {
     constructor(props) {
         super(props)
@@ -87,7 +89,8 @@ class Index extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            active: '',//选中的要添加类型名称
+            /** 选中的要添加类型名称 */
+            active: '',
             /** 选中的元素的id */
             activeElement: 0,
         };
@@ -106,7 +109,7 @@ class Index extends React.Component {
                         <div>
                             <h2>Nav</h2>
                             <div style={{ display: 'flex' }}>
-                                <Nav elementList={elementList} active={this.state.activeElement} setActive={(id)=>{this.setState({activeElement:id})}} />
+                                <Nav elementList={elementList} active={this.state.activeElement} setActive={(id) => { this.setState({ activeElement: id }) }} />
                             </div>
                         </div>
                         <div>
@@ -116,8 +119,11 @@ class Index extends React.Component {
                                 <ComponentType active={this.state.active == 'Text'} text='文字' onClick={() => { this.setState({ active: 'Text' }) }} />
                                 <ComponentType active={this.state.active == 'Image'} text='图片' onClick={() => { this.setState({ active: 'Image' }) }} />
                             </div>
+                            <h2>Add</h2>
                             <div style={{ display: 'flex' }}>
-                                <div onClick={this.add} style={styles.add}>add</div>
+                                <div onClick={this.children} style={styles.add}>children</div>
+                                <div onClick={this.next} style={styles.add}>next</div>
+                                <div onClick={this.prev} style={styles.add}>prev</div>
                             </div>
                         </div>
 
@@ -163,17 +169,45 @@ class Index extends React.Component {
             this.activeElement.setState({ top: point.y, left: point.x, width: activeElement.offsetWidth, height: activeElement.offsetHeight });
         }
     }
-    add = () => {
+    getActiveElement=()=>{
+        return this.props.elementList.get(this.state.activeElement);
+    }
+    next = () => {
         if (!!this.state.active) {
+            let el=this.getActiveElement();
             this.props.Add({
                 name: this.state.active,
-                pid: 0,
+                pid: el.pid,
+                sort:el.sort+1,
                 props: new Map(),
                 content: ''
             }, defaultStyle[this.state.active]);
 
         }
     }
+    children = () => {
+        if (!!this.state.active) {
+            this.props.Add({
+                name: this.state.active,
+                pid: this.state.activeElement,
+                props: new Map(),
+                content: ''
+            }, defaultStyle[this.state.active]);
+        }
+    }
+    prev=()=>{
+        if (!!this.state.active) {
+            let el=this.getActiveElement();
+            this.props.Add({
+                name: this.state.active,
+                pid: el.pid,
+                sort:el.sort,
+                props: new Map(),
+                content: ''
+            }, defaultStyle[this.state.active]);
+        }
+    }
+
     addStyle = () => {
         let name = this.styleName.value;
         let value = this.styleValue.value;
@@ -193,6 +227,10 @@ class Index extends React.Component {
     components = () => {
         let {elementList, styleList} = this.props;
         let allComponents = (data) => {
+            if(!(data instanceof Array))
+            {
+                data=[data];
+            }
             return data.map((value) => {
                 let children = null;
                 let childrenList = elementList.filter(childrenVal => childrenVal.pid == value.$loki);
@@ -208,7 +246,7 @@ class Index extends React.Component {
                 });
                 if (childrenList.length != 0) {
                     children = childrenList.map((childrenValue) => {
-                        allComponents(childrenValue);
+                        return allComponents(childrenValue);
                     });
                 }
                 return loadComponent(value.$loki, value.name, style, props, value.content, children);
