@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import React from 'react';
 import { ContainerWrapped, Text } from '../components/index';
 import { AddElementAction } from '../actions/element';
-import { AddStyleAction, SetStyleAction } from '../actions/style';
+import { AddStyleAction, SetStyleAction,RemoveStyleAction } from '../actions/style';
 import { defaultStyle } from '../data/defaultStyle';
 import { Common } from '../utils/common';
 import ReactDom from 'react-dom';
@@ -104,7 +104,7 @@ class Index extends React.Component {
         return (
             <div>
                 <div style={{ display: 'flex', height: 50 }}></div>
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: 'flex',overflow:'auto' }}>
                     <div style={{ width: 315 }}>
                         <div>
                             <h2>Nav</h2>
@@ -142,8 +142,10 @@ class Index extends React.Component {
                         <div>
                             <div>style</div>
                             <div>
-                                {styleList.filter(style => style.elementId == this.state.activeElement).map((style) => <div key={style.$loki}><label htmlFor="">{style.name}</label><input type="text" defaultValue={style.value} /></div>)}
-
+                                {styleList.filter(style => style.elementId == this.state.activeElement).map((style) => <div key={style.$loki}><label htmlFor="">{style.name}</label>
+                                <input ref={(node)=>this['inputStyl'+style.$loki]=node} onBlur={()=>{style.value=this['inputStyl'+style.$loki].value; this.editStyle(style)}} type="text" defaultValue={style.value} />
+                                <a href="javascript:;" onClick={()=>{this.props.DelStyle(style.$loki)}}>del</a>
+                                </div>)}
                             </div>
                         </div>
                         <div>
@@ -170,7 +172,7 @@ class Index extends React.Component {
         }
     }
     getActiveElement=()=>{
-        return this.props.elementList.get(this.state.activeElement);
+        return this.props.elementList.find((val)=>val.$loki==this.state.activeElement);
     }
     next = () => {
         if (!!this.state.active) {
@@ -219,10 +221,9 @@ class Index extends React.Component {
             });
         }
     }
-    editStyle = () => {
-        this.props.SetStyleAction({
 
-        })
+    editStyle = (style) => {
+        this.props.SetStyle(style)
     }
     components = () => {
         let {elementList, styleList} = this.props;
@@ -265,7 +266,8 @@ let mapDispatchToProps = (dispatch) => {
     return {
         Add: (data, style) => { dispatch(AddElementAction(data, style)) },
         AddStyle: (data) => { dispatch(AddStyleAction(data)) },
-        SetStyle: (data) => { dispatch(SetStyleAction(data)) }
+        SetStyle: (data) => { dispatch(SetStyleAction(data)) },
+        DelStyle: (id) => { dispatch(RemoveStyleAction(id)) }
     }
 }
 

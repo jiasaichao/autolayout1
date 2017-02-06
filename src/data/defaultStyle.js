@@ -1,6 +1,6 @@
 const defaultStyle = {
     Container:{
-        display:'flex',
+        //display:'flex',
         height:'50',
         background: '#F4F6FB'        
     },
