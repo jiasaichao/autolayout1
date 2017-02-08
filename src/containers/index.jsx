@@ -1,19 +1,19 @@
 //import {Header, Sidebar,  NavigationBar, NavigationBarItem,NavBar,List,Container} from "../components/index";
 import { connect } from 'react-redux';
 import React from 'react';
-import { ContainerWrapped, Text } from '../components/index';
+import { ContainerWrapped, TextWrapped } from '../components/index';
 import { AddElementAction } from '../actions/element';
-import { AddStyleAction, SetStyleAction,RemoveStyleAction } from '../actions/style';
-import { defaultStyle } from '../data/defaultStyle';
+import { AddStyleAction, SetStyleAction, RemoveStyleAction } from '../actions/style';
+import { defaultStyle, props } from '../data/defaultStyle';
 import { Common } from '../utils/common';
 import ReactDom from 'react-dom';
 
-let loadComponent = function (id, name, style, props, content, children) {
+let loadComponent = function (id, name, style, props, children) {
     switch (name) {
         case 'Container':
             return <ContainerWrapped key={id} style={style} {...props}>{children}</ContainerWrapped>;
         case 'Text':
-            return <Text key={id} style={style} {...props}>{content}</Text>;
+            return <TextWrapped key={id} style={style} {...props}>{props.content}</TextWrapped>;
     }
 }
 
@@ -90,13 +90,19 @@ class Index extends React.Component {
         super(props)
         this.state = {
             /** 选中的要添加类型名称 */
-            active: '',
+            active: 'Container',
             /** 选中的元素的id */
             activeElement: 0,
         };
     }
     render() {
-        let {styleList, elementList} = this.props;
+        if(this.state.activeElement==0){
+            return <div></div>;
+        }
+        let {styleList, elementList, propsList} = this.props;
+        let activeElement = elementList.find((val) => val.$loki == this.state.activeElement);
+        propsList = propsList.filter((value) => value.elementId == this.state.activeElement);
+        let defalutPropsList = props[activeElement.name];
         let styles = {
             add: { cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '26px', paddingLeft: '8px', paddingRight: '8px' },
             nav: { paddingLeft: 10 }
@@ -104,7 +110,7 @@ class Index extends React.Component {
         return (
             <div>
                 <div style={{ display: 'flex', height: 50 }}></div>
-                <div style={{ display: 'flex',overflow:'auto' }}>
+                <div style={{ display: 'flex', overflow: 'auto' }}>
                     <div style={{ width: 315 }}>
                         <div>
                             <h2>Nav</h2>
@@ -143,8 +149,8 @@ class Index extends React.Component {
                             <div>style</div>
                             <div>
                                 {styleList.filter(style => style.elementId == this.state.activeElement).map((style) => <div key={style.$loki}><label htmlFor="">{style.name}</label>
-                                <input ref={(node)=>this['inputStyl'+style.$loki]=node} onBlur={()=>{style.value=this['inputStyl'+style.$loki].value; this.editStyle(style)}} type="text" defaultValue={style.value} />
-                                <a href="javascript:;" onClick={()=>{this.props.DelStyle(style.$loki)}}>del</a>
+                                    <input ref={(node) => this['inputStyl' + style.$loki] = node} onBlur={() => { style.value = this['inputStyl' + style.$loki].value; this.editStyle(style) }} type="text" defaultValue={style.value} />
+                                    <a href="javascript:;" onClick={() => { this.props.DelStyle(style.$loki) }}>del</a>
                                 </div>)}
                             </div>
                         </div>
@@ -154,6 +160,12 @@ class Index extends React.Component {
                                 <div><label htmlFor="">name</label><input ref={node => this.styleName = node} type="text" /></div>
                                 <div><label htmlFor="">value</label><input ref={node => this.styleValue = node} type="text" /></div>
                                 <div><a href='javascript:;' onClick={this.addStyle}>add</a></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div>props</div>
+                            <div>
+                                {defalutPropsList.map((val) => <div><label htmlFor="">{val.name}</label><input type="text" defaultValue={propsList.find((props) => props.name == val.name).value} /></div>)}
                             </div>
                         </div>
                     </div>
@@ -171,19 +183,21 @@ class Index extends React.Component {
             this.activeElement.setState({ top: point.y, left: point.x, width: activeElement.offsetWidth, height: activeElement.offsetHeight });
         }
     }
-    getActiveElement=()=>{
-        return this.props.elementList.find((val)=>val.$loki==this.state.activeElement);
+    componentDidMount(){
+        //this.children();        
+    }
+    getActiveElement = () => {
+        return this.props.elementList.find((val) => val.$loki == this.state.activeElement);
     }
     next = () => {
         if (!!this.state.active) {
-            let el=this.getActiveElement();
+            let el = this.getActiveElement();
             this.props.Add({
                 name: this.state.active,
                 pid: el.pid,
-                sort:el.sort+1,
-                props: new Map(),
+                sort: el.sort + 1,
                 content: ''
-            }, defaultStyle[this.state.active]);
+            }, defaultStyle[this.state.active], props[this.state.active]);
 
         }
     }
@@ -197,13 +211,13 @@ class Index extends React.Component {
             }, defaultStyle[this.state.active]);
         }
     }
-    prev=()=>{
+    prev = () => {
         if (!!this.state.active) {
-            let el=this.getActiveElement();
+            let el = this.getActiveElement();
             this.props.Add({
                 name: this.state.active,
                 pid: el.pid,
-                sort:el.sort,
+                sort: el.sort,
                 props: new Map(),
                 content: ''
             }, defaultStyle[this.state.active]);
@@ -228,9 +242,8 @@ class Index extends React.Component {
     components = () => {
         let {elementList, styleList} = this.props;
         let allComponents = (data) => {
-            if(!(data instanceof Array))
-            {
-                data=[data];
+            if (!(data instanceof Array)) {
+                data = [data];
             }
             return data.map((value) => {
                 let children = null;
@@ -250,7 +263,7 @@ class Index extends React.Component {
                         return allComponents(childrenValue);
                     });
                 }
-                return loadComponent(value.$loki, value.name, style, props, value.content, children);
+                return loadComponent(value.$loki, value.name, style, props, children);
             });
         }
         return allComponents(elementList.filter(value => value.pid == 0));
@@ -259,12 +272,13 @@ class Index extends React.Component {
 let mapStateToProps = (state) => {
     return {
         elementList: state.elementList,
-        styleList: state.styleList
+        styleList: state.styleList,
+        propsList: state.propsList
     }
 }
 let mapDispatchToProps = (dispatch) => {
     return {
-        Add: (data, style) => { dispatch(AddElementAction(data, style)) },
+        Add: (data, style, props) => { dispatch(AddElementAction(data, style, props)) },
         AddStyle: (data) => { dispatch(AddStyleAction(data)) },
         SetStyle: (data) => { dispatch(SetStyleAction(data)) },
         DelStyle: (id) => { dispatch(RemoveStyleAction(id)) }

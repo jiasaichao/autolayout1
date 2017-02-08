@@ -9,16 +9,18 @@ class App extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state={show:false};
     }
     render() {
         return (
             <div>
-                {this.props.children}
+                {this.state.show?this.props.children:null}
             </div>
         );
     }    
     componentDidMount() {
         this.props.getDataAction();
+        this.setState({show:true});
     }
 }
 

@@ -1,4 +1,5 @@
 import { AddStyleAction } from './style'
+import { AddPropsAction } from './props'
 export const ELEMENT = 'ELEMENT'
 function getData() {
     return window.Loki.collections.find((value) => value.name === 'element');
@@ -22,7 +23,7 @@ export const SetElementAction = (data) => (dispatch) => {
 /**
  * @param data 如果存在sort则大于等于sort的所有数据的sort+1
  */
-export const AddElementAction = (data, style) => (dispatch) => {
+export const AddElementAction = (data, style,props) => (dispatch) => {
     if (data.sort) {
         data.sort = sort;
         getData().chain().where((value)=>{return value.sort>=data.sort}).update((value)=>{
@@ -40,6 +41,14 @@ export const AddElementAction = (data, style) => (dispatch) => {
         dispatch(AddStyleAction({
             name: i,
             value: style[i],
+            elementId: insert.$loki
+        }));
+    }
+
+    for (var i of props) {
+        dispatch(AddPropsAction({
+            name: i.name,
+            value: i.defaultValue,
             elementId: insert.$loki
         }));
     }

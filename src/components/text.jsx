@@ -1,5 +1,6 @@
 import { Common, Global } from '../utils/common';
 import { Icon, Placeholder } from './index';
+import { Wrapped } from './wrapped';
 import React from 'react';
 let SL = Global.styles;
 let CN = Global.className;
@@ -25,3 +26,4 @@ export class Text extends React.Component {
     componentDidMount() {
     }
 }
+export const TextWrapped = Wrapped(Text);

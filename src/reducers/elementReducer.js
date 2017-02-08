@@ -1,5 +1,6 @@
 import {ELEMENT} from '../actions/element'
 import {STYLE} from '../actions/style'
+import {PROPS} from '../actions/props'
 const initialState = [];
 const initialState1 = [{
     id: 1,
@@ -21,6 +22,15 @@ export const ElementReducer = (state = initialState, action) => {
 export const StyleReducer = (state = [], action) => {
     switch (action.type) {
         case STYLE:
+            return action.data;
+        break;
+        default:
+            return state;
+    }
+}
+export const PropsReducer = (state = [], action) => {
+    switch (action.type) {
+        case PROPS:
             return action.data;
         break;
         default:

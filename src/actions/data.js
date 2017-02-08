@@ -14,9 +14,9 @@ export const GetDataAction = (data) => {
              * name: '',//组建名称
              * pid: 0,//父级id
              * sort
-             * styles: new Map(),
+             * styles: //从style中去
              * props: new Map(),
-             * content: '',//内容
+             * //content: '',//内容
              */
             window.Loki.addCollection('element');
             /**
@@ -26,6 +26,12 @@ export const GetDataAction = (data) => {
              * elementId
              */
             window.Loki.addCollection('style');
+            /**
+             * name//不能重复
+             * value
+             * elementId
+             */
+            window.Loki.addCollection('props');
         }
     }
 }

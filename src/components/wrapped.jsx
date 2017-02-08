@@ -9,7 +9,4 @@ const Wrapped = (ElementComponent) => {
         }
     }
 }
-const Wrapped1=function(){
-    console.log('22')
-}
 export { Wrapped }
