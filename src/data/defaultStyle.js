@@ -9,9 +9,11 @@ const defaultStyle = {
 
     }
 }
-const props={
+const defaultProps={
     Text:[
         {name:'content',type:'string',defaultValue:''}
+    ],
+    Container:[
     ]
 };
 const props1 = [
@@ -21,4 +23,4 @@ const props1 = [
         ]
     }
 ];
-export { defaultStyle, props }
+export { defaultStyle, defaultProps }

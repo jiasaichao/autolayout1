@@ -13,7 +13,7 @@ class App extends React.Component {
     }
     render() {
         return (
-            <div>
+            <div id='app'>
                 {this.state.show?this.props.children:null}
             </div>
         );

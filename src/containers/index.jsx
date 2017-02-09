@@ -4,7 +4,8 @@ import React from 'react';
 import { ContainerWrapped, TextWrapped } from '../components/index';
 import { AddElementAction } from '../actions/element';
 import { AddStyleAction, SetStyleAction, RemoveStyleAction } from '../actions/style';
-import { defaultStyle, props } from '../data/defaultStyle';
+import { SetPropsAction } from '../actions/props';
+import { defaultStyle, defaultProps } from '../data/defaultStyle';
 import { Common } from '../utils/common';
 import ReactDom from 'react-dom';
 
@@ -52,7 +53,6 @@ function Nav({elementList, active, setActive}) {
     }
     return (
         <div>
-            <a href='javascript:;' onClick={() => { setActive(0) }} style={{ textDecoration: 'none', color: active == 0 ? 'blue' : '#000' }}>Container</a>
             {NavContent(0)}
         </div>
     );
@@ -96,13 +96,13 @@ class Index extends React.Component {
         };
     }
     render() {
-        if(this.state.activeElement==0){
+        if (this.state.activeElement == 0) {
             return <div></div>;
         }
         let {styleList, elementList, propsList} = this.props;
         let activeElement = elementList.find((val) => val.$loki == this.state.activeElement);
-        propsList = propsList.filter((value) => value.elementId == this.state.activeElement);
-        let defalutPropsList = props[activeElement.name];
+        propsList = propsList.filter((value) => value.elementId == this.state.activeElement);//选中元素的属性
+        let defalutPropsList = defaultProps[activeElement.name];
         let styles = {
             add: { cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '26px', paddingLeft: '8px', paddingRight: '8px' },
             nav: { paddingLeft: 10 }
@@ -149,7 +149,10 @@ class Index extends React.Component {
                             <div>style</div>
                             <div>
                                 {styleList.filter(style => style.elementId == this.state.activeElement).map((style) => <div key={style.$loki}><label htmlFor="">{style.name}</label>
-                                    <input ref={(node) => this['inputStyl' + style.$loki] = node} onBlur={() => { style.value = this['inputStyl' + style.$loki].value; this.editStyle(style) }} type="text" defaultValue={style.value} />
+                                    <input ref={(node) => this['inputStyl' + style.$loki] = node}
+                                        onBlur={() => { style.value = this['inputStyl' + style.$loki].value; this.editStyle(style) }}
+                                        type="text"
+                                        defaultValue={style.value} />
                                     <a href="javascript:;" onClick={() => { this.props.DelStyle(style.$loki) }}>del</a>
                                 </div>)}
                             </div>
@@ -165,7 +168,19 @@ class Index extends React.Component {
                         <div>
                             <div>props</div>
                             <div>
-                                {defalutPropsList.map((val) => <div><label htmlFor="">{val.name}</label><input type="text" defaultValue={propsList.find((props) => props.name == val.name).value} /></div>)}
+                                {defalutPropsList.map((val) => {
+                                    let lokiData=propsList.find((props) => props.name == val.name);
+                                    return (
+                                        <div key={val.name}>
+                                            <label htmlFor="">{val.name}</label>
+                                            <input type="text"
+                                                ref={(node) => this['inputProps' + val.$loki] = node}
+                                                onBlur={() => { lokiData.value = this['inputProps' + val.$loki].value; this.editProps(lokiData) }}
+                                                defaultValue={lokiData.value} />
+                                        </div>
+                                    )
+                                }
+                                )}
                             </div>
                         </div>
                     </div>
@@ -174,6 +189,9 @@ class Index extends React.Component {
         )
     }
     componentDidUpdate(prevProps, prevState) {
+        if (prevState.activeElement == 0) {
+            this.setState({ activeElement: this.props.elementList[0].$loki });
+        }
         if (this.state.activeElement) {
             let activeElement = ReactDOM.findDOMNode(this.refs[this.state.activeElement]);
             let point = Common.getAbsPoint(activeElement);
@@ -183,8 +201,8 @@ class Index extends React.Component {
             this.activeElement.setState({ top: point.y, left: point.x, width: activeElement.offsetWidth, height: activeElement.offsetHeight });
         }
     }
-    componentDidMount(){
-        //this.children();        
+    componentDidMount() {
+        this.children();
     }
     getActiveElement = () => {
         return this.props.elementList.find((val) => val.$loki == this.state.activeElement);
@@ -197,7 +215,7 @@ class Index extends React.Component {
                 pid: el.pid,
                 sort: el.sort + 1,
                 content: ''
-            }, defaultStyle[this.state.active], props[this.state.active]);
+            }, defaultStyle[this.state.active], defaultProps[this.state.active]);
 
         }
     }
@@ -208,7 +226,7 @@ class Index extends React.Component {
                 pid: this.state.activeElement,
                 props: new Map(),
                 content: ''
-            }, defaultStyle[this.state.active]);
+            }, defaultStyle[this.state.active], defaultProps[this.state.active]);
         }
     }
     prev = () => {
@@ -220,7 +238,7 @@ class Index extends React.Component {
                 sort: el.sort,
                 props: new Map(),
                 content: ''
-            }, defaultStyle[this.state.active]);
+            }, defaultStyle[this.state.active], defaultProps[this.state.active]);
         }
     }
 
@@ -239,8 +257,11 @@ class Index extends React.Component {
     editStyle = (style) => {
         this.props.SetStyle(style)
     }
+    editProps = (props) => {
+        this.props.SetProps(props)
+    }
     components = () => {
-        let {elementList, styleList} = this.props;
+        let {elementList, styleList,propsList} = this.props;
         let allComponents = (data) => {
             if (!(data instanceof Array)) {
                 data = [data];
@@ -251,6 +272,9 @@ class Index extends React.Component {
                 let currentStyleList = styleList.filter(currentStyleVal => currentStyleVal.elementId == value.$loki);
                 let style = {};
                 let props = {};
+                propsList.filter((vp) => vp.elementId == this.state.activeElement).forEach((vp)=>{
+                    props[vp.name]=vp.value;
+                });
                 props.ref = value.$loki;
                 props.onClick = () => {
                     this.setState({ activeElement: value.$loki });
@@ -281,6 +305,7 @@ let mapDispatchToProps = (dispatch) => {
         Add: (data, style, props) => { dispatch(AddElementAction(data, style, props)) },
         AddStyle: (data) => { dispatch(AddStyleAction(data)) },
         SetStyle: (data) => { dispatch(SetStyleAction(data)) },
+        SetProps: (data) => { dispatch(SetPropsAction(data)) },
         DelStyle: (id) => { dispatch(RemoveStyleAction(id)) }
     }
 }
