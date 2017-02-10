@@ -4,6 +4,10 @@ const defaultStyle = {
         height: '50',
         background: '#F4F6FB'
     },
+    Image: {
+        width:'60',
+        height: '42',
+    },
     /**选中项样式 */
     selected: {
 
@@ -14,13 +18,9 @@ const defaultProps={
         {name:'content',type:'string',defaultValue:''}
     ],
     Container:[
+    ],
+    Image:[
+        {name:'src',type:'string',defaultValue:'image/placeholder.jpg'}
     ]
 };
-const props1 = [
-    {
-        name: 'Text', props: [
-            { name: 'content', type: 'string', defaultValue: '' }
-        ]
-    }
-];
 export { defaultStyle, defaultProps }

@@ -1,8 +1,8 @@
 //import {Header, Sidebar,  NavigationBar, NavigationBarItem,NavBar,List,Container} from "../components/index";
 import { connect } from 'react-redux';
 import React from 'react';
-import { ContainerWrapped, TextWrapped } from '../components/index';
-import { AddElementAction } from '../actions/element';
+import { ContainerWrapped, TextWrapped, ImageWrapped } from '../components/index';
+import { AddElementAction,RemoveElementAndChildAction } from '../actions/element';
 import { AddStyleAction, SetStyleAction, RemoveStyleAction } from '../actions/style';
 import { SetPropsAction } from '../actions/props';
 import { defaultStyle, defaultProps } from '../data/defaultStyle';
@@ -15,6 +15,8 @@ let loadComponent = function (id, name, style, props, children) {
             return <ContainerWrapped key={id} style={style} {...props}>{children}</ContainerWrapped>;
         case 'Text':
             return <TextWrapped key={id} style={style} {...props}>{props.content}</TextWrapped>;
+        case 'Image':
+            return <ImageWrapped key={id} style={style} {...props}>{props.content}</ImageWrapped>;
     }
 }
 
@@ -57,7 +59,10 @@ function Nav({elementList, active, setActive}) {
         </div>
     );
 }
-/**选中元素的遮罩 */
+/**
+ * 选中元素的遮罩
+ * onDelete 删除这个元素
+ */
 class ActiveElement extends React.Component {
     constructor(props) {
         super(props)
@@ -79,9 +84,31 @@ class ActiveElement extends React.Component {
                 width: this.state.width,
                 border: '1px solid #2d2323',
                 boxSizing: 'border-box'
+            },
+            del: {
+                position: 'absolute',
+                top: -7,
+                right: 0,
+                border: '1px solid #ff6666',
+                width: 15,
+                height: 15,
+                borderRadius: '50%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                color: '#f66'
             }
         }
-        return <div style={styles.root}></div>;
+        return (
+            <div
+                style={styles.root}
+                onClick={(e) => {
+                    e.stopPropagation();
+                }}
+            >
+            {this.props.onDelete?<div style={styles.del} onClick={this.props.onDelete}>x</div>:null}                
+            </div>
+        );
     }
 }
 
@@ -136,7 +163,8 @@ class Index extends React.Component {
                     </div>
                     <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
                         <div ref={r => this.appContainer = r} style={{ position: 'relative', width: 375, height: 667, border: '1px solid #11b6f5' }}>
-                            {this.state.activeElement ? <ActiveElement ref={e => this.activeElement = e} /> : null}
+                            {this.state.activeElement ? <ActiveElement ref={e => this.activeElement = e} onDelete={activeElement.pid==0?false:()=>{this.delElementAndChild();
+                                }} /> : null}
                             {this.components()}
                         </div>
                         {/*<iframe src="index.html"></iframe>*/}
@@ -169,7 +197,7 @@ class Index extends React.Component {
                             <div>props</div>
                             <div>
                                 {defalutPropsList.map((val) => {
-                                    let lokiData=propsList.find((props) => props.name == val.name);
+                                    let lokiData = propsList.find((props) => props.name == val.name);
                                     return (
                                         <div key={val.name}>
                                             <label htmlFor="">{val.name}</label>
@@ -214,7 +242,6 @@ class Index extends React.Component {
                 name: this.state.active,
                 pid: el.pid,
                 sort: el.sort + 1,
-                content: ''
             }, defaultStyle[this.state.active], defaultProps[this.state.active]);
 
         }
@@ -224,10 +251,12 @@ class Index extends React.Component {
             this.props.Add({
                 name: this.state.active,
                 pid: this.state.activeElement,
-                props: new Map(),
-                content: ''
             }, defaultStyle[this.state.active], defaultProps[this.state.active]);
         }
+    }
+    delElementAndChild=()=>{
+        this.props.DelElementAndChild(this.state.activeElement);
+        this.setState({activeElement: this.props.elementList[0].$loki});
     }
     prev = () => {
         if (!!this.state.active) {
@@ -236,8 +265,6 @@ class Index extends React.Component {
                 name: this.state.active,
                 pid: el.pid,
                 sort: el.sort,
-                props: new Map(),
-                content: ''
             }, defaultStyle[this.state.active], defaultProps[this.state.active]);
         }
     }
@@ -261,7 +288,7 @@ class Index extends React.Component {
         this.props.SetProps(props)
     }
     components = () => {
-        let {elementList, styleList,propsList} = this.props;
+        let {elementList, styleList, propsList} = this.props;
         let allComponents = (data) => {
             if (!(data instanceof Array)) {
                 data = [data];
@@ -272,8 +299,8 @@ class Index extends React.Component {
                 let currentStyleList = styleList.filter(currentStyleVal => currentStyleVal.elementId == value.$loki);
                 let style = {};
                 let props = {};
-                propsList.filter((vp) => vp.elementId == value.$loki).forEach((vp)=>{
-                    props[vp.name]=vp.value;
+                propsList.filter((vp) => vp.elementId == value.$loki).forEach((vp) => {
+                    props[vp.name] = vp.value;
                 });
                 props.ref = value.$loki;
                 props.onClick = () => {
@@ -303,6 +330,7 @@ let mapStateToProps = (state) => {
 let mapDispatchToProps = (dispatch) => {
     return {
         Add: (data, style, props) => { dispatch(AddElementAction(data, style, props)) },
+        DelElementAndChild: (data) => { dispatch(RemoveElementAndChildAction(data)) },
         AddStyle: (data) => { dispatch(AddStyleAction(data)) },
         SetStyle: (data) => { dispatch(SetStyleAction(data)) },
         SetProps: (data) => { dispatch(SetPropsAction(data)) },

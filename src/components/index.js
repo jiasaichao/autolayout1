@@ -14,9 +14,10 @@
 // import * as FullPage from "./fullpage";
 // import * as Scroll from "./scroll";
 // import { ImageCrop } from "./imagecrop";
-import { Container,ContainerWrapped } from "./container";
-import { Text,TextWrapped } from "./text";
+import { Container, ContainerWrapped } from "./container";
+import { Text, TextWrapped } from "./text";
+import { Image, ImageWrapped } from "./image";
 //import { Wrapped } from './wrapped';
 export {
-    Container,Text,ContainerWrapped,TextWrapped
+    Container, Text, ContainerWrapped, TextWrapped, Image, ImageWrapped
 }

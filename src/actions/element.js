@@ -16,6 +16,11 @@ export const RemoveElementAction = (id) => (dispatch) => {
     getData().remove(id);
     return GetElementAction(dispatch);
 }
+export const RemoveElementAndChildAction = (id) => (dispatch) => {
+    getData().remove(id);
+    getData().chain().find({pid:id}).remove();
+    return GetElementAction(dispatch);
+}
 export const SetElementAction = (data) => (dispatch) => {
     getData().update(data);
     return GetElementAction(dispatch);
@@ -25,7 +30,6 @@ export const SetElementAction = (data) => (dispatch) => {
  */
 export const AddElementAction = (data, style,props) => (dispatch) => {
     if (data.sort) {
-        data.sort = sort;
         getData().chain().where((value)=>{return value.sort>=data.sort}).update((value)=>{
             value.sort=value.sort+1;
             return value;

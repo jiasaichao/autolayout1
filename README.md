@@ -37,7 +37,7 @@ branch - 用于将查询路径拆分为多个分支。
 simplesort - 只传递属性名称，您的resulset将按此排序。
 sort - 允许你提供自己的比较函数来对结果集进行排序。
 compoundort - 允许您基于多个属性按升序或降序排序。
-update - 用于对当前在结果集中的所有文档运行更新操作（javascript函数）。这个常用更新操作，一个
+update - 用于对当前在结果集中的所有文档运行更新操作（javascript函数）。这个常用更新操作,批量更新
 remove - 从集合中移除当前在resultset中的所有文档对象（以及resultset）
 map - 映射到一个新的匿名集合，提供一个map函数
 mapReduce - 允许您为当前结果集数据指定一个映射函数和一个reduce函数。
