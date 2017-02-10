@@ -272,7 +272,7 @@ class Index extends React.Component {
                 let currentStyleList = styleList.filter(currentStyleVal => currentStyleVal.elementId == value.$loki);
                 let style = {};
                 let props = {};
-                propsList.filter((vp) => vp.elementId == this.state.activeElement).forEach((vp)=>{
+                propsList.filter((vp) => vp.elementId == value.$loki).forEach((vp)=>{
                     props[vp.name]=vp.value;
                 });
                 props.ref = value.$loki;
