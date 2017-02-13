@@ -1,13 +1,15 @@
 //import {Header, Sidebar,  NavigationBar, NavigationBarItem,NavBar,List,Container} from "../components/index";
 import { connect } from 'react-redux';
 import React from 'react';
+import ReactDom from 'react-dom';
 import { ContainerWrapped, TextWrapped, ImageWrapped } from '../components/index';
-import { AddElementAction,RemoveElementAndChildAction } from '../actions/element';
+import { AddElementAction, RemoveElementAndChildAction } from '../actions/element';
 import { AddStyleAction, SetStyleAction, RemoveStyleAction } from '../actions/style';
 import { SetPropsAction } from '../actions/props';
-import { defaultStyle, defaultProps } from '../data/defaultStyle';
+import { defaultStyle, defaultProps, commonContainerStyle } from '../data/defaultStyle';
 import { Common } from '../utils/common';
-import ReactDom from 'react-dom';
+import {renderToStaticMarkup} from 'react-dom/server';
+import { htmlFormat } from '../utils/htmlformat';
 
 let loadComponent = function (id, name, style, props, children) {
     switch (name) {
@@ -106,7 +108,7 @@ class ActiveElement extends React.Component {
                     e.stopPropagation();
                 }}
             >
-            {this.props.onDelete?<div style={styles.del} onClick={this.props.onDelete}>x</div>:null}                
+                {this.props.onDelete ? <div style={styles.del} onClick={this.props.onDelete}>x</div> : null}
             </div>
         );
     }
@@ -146,7 +148,7 @@ class Index extends React.Component {
                             </div>
                         </div>
                         <div>
-                            <h2>Components</h2>
+                            <h2>Base Components</h2>
                             <div style={{ display: 'flex' }}>
                                 <ComponentType active={this.state.active == 'Container'} text='容器' onClick={() => { this.setState({ active: 'Container' }) }} />
                                 <ComponentType active={this.state.active == 'Text'} text='文字' onClick={() => { this.setState({ active: 'Text' }) }} />
@@ -163,8 +165,9 @@ class Index extends React.Component {
                     </div>
                     <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
                         <div ref={r => this.appContainer = r} style={{ position: 'relative', width: 375, height: 667, border: '1px solid #11b6f5' }}>
-                            {this.state.activeElement ? <ActiveElement ref={e => this.activeElement = e} onDelete={activeElement.pid==0?false:()=>{this.delElementAndChild();
-                                }} /> : null}
+                            {this.state.activeElement ? <ActiveElement ref={e => this.activeElement = e} onDelete={activeElement.pid == 0 ? false : () => {
+                                this.delElementAndChild();
+                            }} /> : null}
                             {this.components()}
                         </div>
                         {/*<iframe src="index.html"></iframe>*/}
@@ -194,6 +197,24 @@ class Index extends React.Component {
                             </div>
                         </div>
                         <div>
+                            <div>common style</div>
+                            <div>
+                                {commonContainerStyle.map((style, index) => <div key={style.name}>
+                                    <label htmlFor="">{style.name}:</label>
+                                    <label htmlFor="">{style.defaultValue}</label>
+                                    <a href="javascript:;" onClick={() => {
+                                        if (!!this.state.activeElement) {
+                                            this.props.AddStyle({
+                                                name: style.name,
+                                                value: style.defaultValue,
+                                                elementId: this.state.activeElement
+                                            });
+                                        }
+                                    }}>add</a>
+                                </div>)}
+                            </div>
+                        </div>
+                        <div>
                             <div>props</div>
                             <div>
                                 {defalutPropsList.map((val) => {
@@ -211,7 +232,27 @@ class Index extends React.Component {
                                 )}
                             </div>
                         </div>
+                        <div>
+                            <div>set component</div>
+                            <div>
+                                <div><label htmlFor="">name</label><input ref={node => this.componentName = node} type="text" /></div>
+                                <div><a href='javascript:;' >set</a></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div>code</div>
+                            <div>
+                                <div><a href='javascript:;' onClick={this.addStyle}>code</a></div>
+                            </div>
+                        </div>
                     </div>
+                </div>
+                <div>
+                    <pre>
+                        <code>
+                            {htmlFormat(renderToStaticMarkup(<div>{this.components()}</div>))}
+                        </code>
+                    </pre>
                 </div>
             </div>
         )
@@ -254,9 +295,9 @@ class Index extends React.Component {
             }, defaultStyle[this.state.active], defaultProps[this.state.active]);
         }
     }
-    delElementAndChild=()=>{
+    delElementAndChild = () => {
         this.props.DelElementAndChild(this.state.activeElement);
-        this.setState({activeElement: this.props.elementList[0].$loki});
+        this.setState({ activeElement: this.props.elementList[0].$loki });
     }
     prev = () => {
         if (!!this.state.active) {
