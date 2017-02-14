@@ -34,7 +34,10 @@ module.exports = {
         loaders: [
             {
                 test: /\.svg$/,
-                loader: 'svg-sprite'
+                loader: 'svg-sprite?' + JSON.stringify({
+                    name: 'icon_[name]',
+                    prefixize: true
+                })
             },
             {
                 test: /\.jsx?$/,

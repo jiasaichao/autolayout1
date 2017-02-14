@@ -8,6 +8,8 @@ const defaultStyle = {
         width: '60',
         height: '42',
     },
+    Icon: {
+    },
     /**选中项样式 */
     selected: {
 
@@ -28,6 +30,12 @@ const defaultProps = {
     ],
     Image: [
         { name: 'src', type: 'string', defaultValue: 'image/placeholder.jpg' }
+    ],
+    Icon:[
+        {name:'height', type:'string', defaultValue:'25'},
+        {name:'width', type:'string', defaultValue:'25'},
+        {name:'color', type:'string', defaultValue:'#000'},
+        {name:'name', type:'string', defaultValue:'Chat'},
     ]
 };
 export { defaultStyle, defaultProps,commonContainerStyle }

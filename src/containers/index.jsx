@@ -2,7 +2,7 @@
 import { connect } from 'react-redux';
 import React from 'react';
 import ReactDom from 'react-dom';
-import { ContainerWrapped, TextWrapped, ImageWrapped } from '../components/index';
+import { ContainerWrapped, TextWrapped, IconWrapped } from '../components/index';
 import { AddElementAction, RemoveElementAndChildAction } from '../actions/element';
 import { AddStyleAction, SetStyleAction, RemoveStyleAction } from '../actions/style';
 import { SetPropsAction } from '../actions/props';
@@ -19,6 +19,8 @@ let loadComponent = function (id, name, style, props, children) {
             return <TextWrapped key={id} style={style} {...props}>{props.content}</TextWrapped>;
         case 'Image':
             return <ImageWrapped key={id} style={style} {...props}>{props.content}</ImageWrapped>;
+        case 'Icon':
+            return <IconWrapped key={id} style={style} {...props}></IconWrapped>;
     }
 }
 
@@ -65,7 +67,7 @@ function Nav({elementList, active, setActive}) {
  * 选中元素的遮罩
  * onDelete 删除这个元素
  */
-class ActiveElement extends React.Component {
+class ActiveElement extends React.Component {    
     constructor(props) {
         super(props)
         this.state = {
@@ -153,6 +155,7 @@ class Index extends React.Component {
                                 <ComponentType active={this.state.active == 'Container'} text='容器' onClick={() => { this.setState({ active: 'Container' }) }} />
                                 <ComponentType active={this.state.active == 'Text'} text='文字' onClick={() => { this.setState({ active: 'Text' }) }} />
                                 <ComponentType active={this.state.active == 'Image'} text='图片' onClick={() => { this.setState({ active: 'Image' }) }} />
+                                <ComponentType active={this.state.active == 'Icon'} text='Icon' onClick={() => { this.setState({ active: 'Icon' }) }} />
                             </div>
                             <h2>Add</h2>
                             <div style={{ display: 'flex' }}>
