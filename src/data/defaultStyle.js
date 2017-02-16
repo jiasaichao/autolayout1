@@ -1,3 +1,10 @@
+const baseComponents=[
+    {name:'Container',type:'container'},
+    {name:'Text',type:'normal'},
+    {name:'Image',type:'normal'},
+    {name:'Icon',type:'normal'}
+];
+
 const defaultStyle = {
     Container: {
         //display:'flex',
@@ -38,4 +45,4 @@ const defaultProps = {
         {name:'name', type:'string', defaultValue:'Chat'},
     ]
 };
-export { defaultStyle, defaultProps,commonContainerStyle }
+export { defaultStyle, defaultProps,commonContainerStyle,baseComponents }

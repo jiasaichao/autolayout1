@@ -1,6 +1,7 @@
 import {ELEMENT} from '../actions/element'
 import {STYLE} from '../actions/style'
 import {PROPS} from '../actions/props'
+import {COMPONENT} from '../actions/component'
 const initialState = [];
 const initialState1 = [{
     id: 1,
@@ -31,6 +32,15 @@ export const StyleReducer = (state = [], action) => {
 export const PropsReducer = (state = [], action) => {
     switch (action.type) {
         case PROPS:
+            return action.data;
+        break;
+        default:
+            return state;
+    }
+}
+export const ComponentReducer = (state = [], action) => {
+    switch (action.type) {
+        case COMPONENT:
             return action.data;
         break;
         default:

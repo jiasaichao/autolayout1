@@ -2,13 +2,14 @@
 import { connect } from 'react-redux';
 import React from 'react';
 import ReactDom from 'react-dom';
-import { ContainerWrapped, TextWrapped, IconWrapped } from '../components/index';
-import { AddElementAction, RemoveElementAndChildAction } from '../actions/element';
-import { AddStyleAction, SetStyleAction, RemoveStyleAction } from '../actions/style';
-import { SetPropsAction } from '../actions/props';
+import { ContainerWrapped, TextWrapped, IconWrapped, ImageWrapped } from '../components/index';
+import { AddElementAction, RemoveElementAndChildAction, GetElementAction } from '../actions/element';
+import { AddStyleAction, SetStyleAction, RemoveStyleAction, GetStyleAction } from '../actions/style';
+import { AddComponentAction, SetComponentAction, RemoveComponentAction, GetComponentAction, BuildComponentAction } from '../actions/component';
+import { SetPropsAction, GetPropsAction } from '../actions/props';
 import { defaultStyle, defaultProps, commonContainerStyle } from '../data/defaultStyle';
 import { Common } from '../utils/common';
-import {renderToStaticMarkup} from 'react-dom/server';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { htmlFormat } from '../utils/htmlformat';
 
 let loadComponent = function (id, name, style, props, children) {
@@ -16,11 +17,11 @@ let loadComponent = function (id, name, style, props, children) {
         case 'Container':
             return <ContainerWrapped key={id} style={style} {...props}>{children}</ContainerWrapped>;
         case 'Text':
-            return <TextWrapped key={id} style={style} {...props}>{props.content}</TextWrapped>;
+            return <TextWrapped key={id} style={style} {...props} />;
         case 'Image':
-            return <ImageWrapped key={id} style={style} {...props}>{props.content}</ImageWrapped>;
+            return <ImageWrapped key={id} style={style} {...props} />;
         case 'Icon':
-            return <IconWrapped key={id} style={style} {...props}></IconWrapped>;
+            return <IconWrapped key={id} style={style} {...props} />;
     }
 }
 
@@ -67,7 +68,7 @@ function Nav({elementList, active, setActive}) {
  * 选中元素的遮罩
  * onDelete 删除这个元素
  */
-class ActiveElement extends React.Component {    
+class ActiveElement extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -236,10 +237,16 @@ class Index extends React.Component {
                             </div>
                         </div>
                         <div>
-                            <div>set component</div>
+                            <div>set to component</div>
                             <div>
                                 <div><label htmlFor="">name</label><input ref={node => this.componentName = node} type="text" /></div>
-                                <div><a href='javascript:;' >set</a></div>
+                                <div><a href='javascript:;' onClick={() => {
+                                    this.props.AddComponent({ name: this.componentName.value, elementId: activeElement.$loki, type: 'normal', containerId: 0 });
+                                }}>set</a>
+                                    <a href="javascript:;" onClick={() => {
+                                        this.props.BuildComponentAction();
+                                    }}>BuildComponent</a>
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -274,7 +281,8 @@ class Index extends React.Component {
         }
     }
     componentDidMount() {
-        this.children();
+        this.props.GetAllData();
+        //this.children();
     }
     getActiveElement = () => {
         return this.props.elementList.find((val) => val.$loki == this.state.activeElement);
@@ -368,7 +376,8 @@ let mapStateToProps = (state) => {
     return {
         elementList: state.elementList,
         styleList: state.styleList,
-        propsList: state.propsList
+        propsList: state.propsList,
+        componentList: state.componentList
     }
 }
 let mapDispatchToProps = (dispatch) => {
@@ -378,7 +387,10 @@ let mapDispatchToProps = (dispatch) => {
         AddStyle: (data) => { dispatch(AddStyleAction(data)) },
         SetStyle: (data) => { dispatch(SetStyleAction(data)) },
         SetProps: (data) => { dispatch(SetPropsAction(data)) },
-        DelStyle: (id) => { dispatch(RemoveStyleAction(id)) }
+        DelStyle: (id) => { dispatch(RemoveStyleAction(id)) },
+        AddComponent: (data) => { dispatch(AddComponentAction(data)) },
+        BuildComponentAction: (data) => { dispatch(BuildComponentAction()) },
+        GetAllData: (data) => { GetComponentAction(dispatch), GetElementAction(dispatch), GetStyleAction(dispatch), GetPropsAction(dispatch) },
     }
 }
 

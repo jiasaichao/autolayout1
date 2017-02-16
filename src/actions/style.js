@@ -1,5 +1,5 @@
 export const STYLE = 'STYLE'
-function getData() {
+export function getData() {
     return window.Loki.collections.find((value) => value.name === 'style');
 }
 export const StyleAction = (data) => (dispatch) => {

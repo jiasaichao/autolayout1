@@ -1,5 +1,5 @@
 export const PROPS = 'PROPS'
-function getData() {
+export function getData() {
     return window.Loki.collections.find((value) => value.name === 'props');
 }
 export const PropsAction = (data) => (dispatch) => {

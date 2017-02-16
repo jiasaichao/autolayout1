@@ -13,9 +13,7 @@ import * as icons from '../data/icons';
 export function Icon({name,style, color='#fff', width = 16, height = 16, className = 'icon'}) {
     let styles = {
         style: Global.styles.create({ fill: color }).merge(style)
-    };
-    debugger;
-    
+    };    
     return (
         <svg className={className} style={styles.style.o} width={width} height={height}>
             <use xlinkHref={icons[name]} />

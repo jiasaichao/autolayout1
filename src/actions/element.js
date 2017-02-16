@@ -1,7 +1,7 @@
 import { AddStyleAction } from './style'
 import { AddPropsAction } from './props'
 export const ELEMENT = 'ELEMENT'
-function getData() {
+export function getData() {
     return window.Loki.collections.find((value) => value.name === 'element');
 }
 export const ElementAction = (data) => (dispatch) => {
@@ -60,6 +60,6 @@ export const AddElementAction = (data, style,props) => (dispatch) => {
 }
 
 export const GetElementAction = (dispatch) => {
-    let data = getData().data;
+    let data = getData().chain().simplesort('sort').data();
     dispatch(ElementAction(data));
 }

@@ -19,8 +19,9 @@ class App extends React.Component {
         );
     }    
     componentDidMount() {
-        this.props.getDataAction();
-        this.setState({show:true});
+        this.props.getDataAction(()=>{
+            this.setState({show:true});
+        });        
     }
 }
 
@@ -30,8 +31,8 @@ let mapStateToProps = (state) => {
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        getDataAction: () => {
-            dispatch(GetDataAction());
+        getDataAction: (callback) => {
+            dispatch(GetDataAction(callback));
         }
     }
 }

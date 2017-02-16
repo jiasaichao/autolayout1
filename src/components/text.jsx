@@ -17,7 +17,7 @@ export class Text extends React.Component {
         }
         return (
             <span style={styles.root.o} onClick={this.props.onClick}>
-                {this.props.children}
+                {this.props.content}
             </span>
         );
     }

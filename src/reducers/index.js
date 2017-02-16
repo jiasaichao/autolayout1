@@ -6,7 +6,7 @@ import {combineReducers} from 'redux';
 // import sidebar from './sidebarReducer';
 // import router from './routerReducer';
 // import {ConfigReducer} from './configReducer';
-import {ElementReducer,StyleReducer,PropsReducer} from './elementReducer';
+import {ElementReducer,StyleReducer,PropsReducer,ComponentReducer} from './elementReducer';
 import {apiDataReducer} from './apiDataReducer';
 /**
  * 合并reducers
@@ -18,7 +18,8 @@ const index = combineReducers({
     elementList:ElementReducer,
     styleList:StyleReducer,
     apiData:apiDataReducer,
-    propsList:PropsReducer
+    propsList:PropsReducer,
+    componentList:ComponentReducer
   // config:ConfigReducer
 })
 
