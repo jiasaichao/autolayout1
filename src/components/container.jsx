@@ -25,9 +25,9 @@ export class Container extends React.Component {
     }
     componentDidMount() {
     }
-    click = () => {
+    click = (e) => {
         if (this.props.onClick) {
-            this.props.onClick();
+            this.props.onClick(e);
         }
     }
 }

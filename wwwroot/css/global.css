@@ -14,7 +14,7 @@ textarea:focus, keygen:focus, select:focus {
   /*height: 100vh;*/
   height: 100%;
   position: relative;
-  overflow: hidden;
+  /*overflow: hidden;*/
 }
 /*清除长按选项*/
 .user-select-none{

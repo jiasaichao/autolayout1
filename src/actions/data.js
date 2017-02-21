@@ -51,3 +51,11 @@ export const GetDataAction = (callback) => {
         }
     }
 }
+export const SaveData=(onOk)=>{
+    window.Loki.save(()=>{
+        if(onOk)
+        {
+            onOk();
+        }
+    });
+}

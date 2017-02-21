@@ -1,13 +1,12 @@
 import { Common, Global } from '../../utils/common';
 import { Wrapped } from '../wrapped';
-import { Image,Container,Icon,Text } from '../';
 import React from 'react';
 let SL = Global.styles;
 let CN = Global.className;
 /**
  * style
  */
-export class Ac extends React.Component {
+export class Dd extends React.Component {
     constructor(props) {
         super(props)
     }
@@ -17,11 +16,7 @@ export class Ac extends React.Component {
         }
         return (
             <Container >
-<Text  content='sdfasfsadf' /><Container >
-<Text  content='1234' /><Container >
 <Text  content='5678' /><Image  src='image/placeholder.jpg' />
-                </Container>
-                </Container>
                 </Container>
         );
     }
@@ -30,4 +25,4 @@ export class Ac extends React.Component {
     componentDidMount() {
     }
 }
-export const AcWrapped = Wrapped(Ac);
+export const DdWrapped = Wrapped(Dd);

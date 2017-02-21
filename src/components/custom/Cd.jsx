@@ -1,5 +1,6 @@
 import { Common, Global } from '../../utils/common';
 import { Wrapped } from '../wrapped';
+import { Image,Container,Icon,Text } from '../';
 import React from 'react';
 let SL = Global.styles;
 let CN = Global.className;

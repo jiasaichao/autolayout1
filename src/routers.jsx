@@ -5,7 +5,8 @@ import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
 import App from "./app";
 import Index from "./containers/index";
 //import Index from "./containers/api";
-import Add from "./containers/add";
+import Creator from "./containers/creator";
+import Component from "./containers/component";
 
 
 //import Modeules from './controller/index';
@@ -19,11 +20,10 @@ let appRootComponent = (
     <Provider store={store}>
         <Router history={hashHistory}>
             <Route path="/" component={App}>
-                <IndexRoute component={Index} />
                 <Route path="/" component={Index}>
-                    <Route path="/add" component={Add} />
+                    <Route path="/creator" component={Creator} />
+                    <Route path="/component" component={Component} />
                 </Route>
-
             </Route>
             {/*404, <NotFoundRoute handler={CourseRouteNotFound} /> NotFoundRoute这个好像也行*/}
             {/**<Route path="*" component={NotFound}></Route> */}
